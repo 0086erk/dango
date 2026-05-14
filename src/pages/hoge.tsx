@@ -18,13 +18,53 @@ const IndexPage: NextPage<Props> = ({ countries }: Props): ReactElement => {
   const [isNewInput, setIsNewInput] = useState(false);
 
   const appendNumber = (num: string) => {
-    if (isNewInput === true){
-      setCount(num1)
-    }else if(count === "0") {
+    if (isNewInput){
+      setCount(num);
+      setIsNewInput(false)
+    }else{
+      if (count === "0"){
       setCount(num); // 0 のときは置き換える
-    } else {
+      } else {
       setCount(count + num); // それ以外は連結
-    }
+      }
+    } 
+  };
+
+  const calculateResult = (): string | null => {
+
+  if (operator === null) {
+    return null;
+  }
+
+  const n1 = Number(num1);
+  const n2 = Number(count);
+
+  let result = 0;
+
+  if (operator === "+") {
+    result = n1 + n2;
+  } else if (operator === "-") {
+    result = n1 - n2;
+  } else if (operator === "*") {
+    result = n1 * n2;
+  } else if (operator === "/") {
+    result = n1 / n2;
+  }
+  return String(result);
+};
+
+  const handleOperator = (op: string) =>{
+     const result = calculateResult();
+
+  if (result === null) {
+    setNum1(count);
+  } else {
+    setCount(result);
+    setNum1(result);
+  }
+
+  setOperator(op);
+  setIsNewInput(true);
   };
 
   const [labourHours, setLabourHours] = useState<string>('0');
@@ -59,7 +99,6 @@ useEffect(() => {
               className="py-2 bg-cyan-300 text-white rounded border border-gray-200 cursor-pointer"
               onClick={() => {
                 console.log(count);
-
                 appendNumber("8")
               }}
             >
@@ -78,7 +117,7 @@ useEffect(() => {
               onClick={() => {
                 console.log(count);
 
-                setCount(count);
+                handleOperator("/");
               }}
             >
               <span className="select-none text-xl">/</span>
@@ -116,7 +155,7 @@ useEffect(() => {
               onClick={() => {
                 console.log(count);
 
-                setCount(count);
+                handleOperator("*");
               }}
             >
               <span className="select-none text-xl">*</span>
@@ -154,7 +193,7 @@ useEffect(() => {
               onClick={() => {
                 console.log(count);
 
-                setCount(count);
+                handleOperator("-");
               }}
             >
               <span className="select-none text-xl">-</span>
@@ -164,7 +203,16 @@ useEffect(() => {
               onClick={() => {
                 console.log(count);
 
-                setCount(count);
+                 if (count.includes(".")) return;
+
+                 if (isNewInput) {
+                    setCount("0.");
+                  setIsNewInput(false);
+                } else if (count === "0") {
+                    setCount("0.");
+                  } else {
+                    setCount(count + ".");
+                  }
               }}
             >
               <span className="select-none text-xl">.</span>
@@ -175,6 +223,7 @@ useEffect(() => {
                 console.log(count);
 
                 appendNumber("0")
+
               }}
             >
               <span className="select-none text-xl">0</span>
@@ -182,8 +231,14 @@ useEffect(() => {
             <Button
               className="py-2 bg-cyan-300 text-white rounded border border-gray-200 cursor-pointer"
               onClick={() => {
-                setCount(count);
-              }}
+              const result = calculateResult();
+               if (result === null) {
+                 setNum1(count);
+                } else {
+                  setCount(result);
+                  setNum1(result);
+                }
+            }}
             >
               <span className="select-none text-xl">=</span>
             </Button>
@@ -192,10 +247,8 @@ useEffect(() => {
               onClick={() => {
                 console.log(count);
 
-                setNum1(count);
-                setCount("0");
-                setOperator("+")
-                setIsNewInput(true)
+                handleOperator("+");
+
               }}
             >
               <span className="select-none text-xl">+</span>
@@ -206,6 +259,10 @@ useEffect(() => {
                 console.log(count);
 
                 setCount("0");
+                setNum1("0");
+                setOperator(null);
+                setIsNewInput(false);
+                
               }}
             >
               <span className="select-none text-xl">C</span>
