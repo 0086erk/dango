@@ -203,16 +203,16 @@ useEffect(() => {
               onClick={() => {
                 console.log(count);
 
-                 if (count.includes(".")) return;
-
-                 if (isNewInput) {
-                    setCount("0.");
+                if (isNewInput) {
+                  setCount("0.");
                   setIsNewInput(false);
+                } else if (count.includes(".")) {
+                  return;
                 } else if (count === "0") {
-                    setCount("0.");
-                  } else {
-                    setCount(count + ".");
-                  }
+                  setCount("0.");
+                } else {
+                  setCount(count + ".");
+                }
               }}
             >
               <span className="select-none text-xl">.</span>
@@ -237,6 +237,7 @@ useEffect(() => {
                 } else {
                   setCount(result);
                   setNum1(result);
+                  setIsNewInput(true);
                 }
             }}
             >
